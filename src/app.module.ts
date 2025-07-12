@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { PartnersModule } from './partners/partners.module';
 import { SlotsModule } from './slots/slots.module';
+import { AppointmentsModule } from './appointments/appointments.module';
 
 const envFilePath = [`.env.${process.env.NODE_ENV || 'development'}`, '.env'];
 
@@ -31,6 +32,7 @@ const envFilePath = [`.env.${process.env.NODE_ENV || 'development'}`, '.env'];
     RedisModule,
     PartnersModule,
     SlotsModule,
+    AppointmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService, RedisService],

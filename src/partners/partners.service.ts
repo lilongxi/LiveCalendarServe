@@ -71,6 +71,7 @@ export class PartnersService {
         .select('*')
         .eq('partner_id', partner.id)
         .eq('is_active', true)
+        .eq('is_appointment', false)
         .gte('start_time', now.toISOString())
         .lte('start_time', sevenDaysLater.toISOString())
         .order('start_time', { ascending: true });
@@ -81,5 +82,23 @@ export class PartnersService {
 
     // 4. 返回组合数据
     return { partner, available_slots };
+  }
+
+  async findOneById(id: string) {
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from('partners')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        throw new NotFoundException(`Partner with ID "${id}" not found.`);
+      }
+      throw new InternalServerErrorException(error.message);
+    }
+
+    return data;
   }
 }

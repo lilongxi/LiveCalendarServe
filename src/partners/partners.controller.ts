@@ -49,4 +49,16 @@ export class PartnersController extends BaseController {
       return this.error(e);
     }
   }
+
+  @Get('/partner/:id')
+  async findOneById(
+    @Param('id') id: string,
+  ): Promise<BaseResponse<PlainLiteralObject>> {
+    try {
+      const res = await this.partnersService.findOneById(id);
+      return this.success(res);
+    } catch (e) {
+      return this.error(e);
+    }
+  }
 }
