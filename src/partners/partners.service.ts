@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { v4 } from 'uuid';
 import { CreatePartnerDto } from 'src/common/dtos/create-partner.dto';
@@ -37,5 +41,45 @@ export class PartnersService {
     }
 
     return data;
+  }
+
+  async findByShareLinkId(share_link_id: string) {
+    // 1. 根据 share_link_id 查找合伙人
+    const { data: partner, error: partnerError } = await this.supabaseService
+      .getClient()
+      .from('partners')
+      .select('id, name')
+      .eq('share_link_id', share_link_id)
+      .single();
+
+    if (partnerError || !partner) {
+      throw new NotFoundException(
+        `Partner with share_link_id "${share_link_id}" not found`,
+      );
+    }
+
+    // 2. 计算未来7天的时间范围
+    const now = new Date();
+    const sevenDaysLater = new Date(now);
+    sevenDaysLater.setDate(now.getDate() + 7);
+
+    // 3. 查询该合伙人未来7天内所有可用的时间段
+    const { data: available_slots, error: slotsError } =
+      await this.supabaseService
+        .getClient()
+        .from('available_slots')
+        .select('*')
+        .eq('partner_id', partner.id)
+        .eq('is_active', true)
+        .gte('start_time', now.toISOString())
+        .lte('start_time', sevenDaysLater.toISOString())
+        .order('start_time', { ascending: true });
+
+    if (slotsError) {
+      throw new InternalServerErrorException(slotsError.message);
+    }
+
+    // 4. 返回组合数据
+    return { partner, available_slots };
   }
 }

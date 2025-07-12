@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   PlainLiteralObject,
+  Param,
 } from '@nestjs/common';
 import { PartnersService } from './partners.service';
 import { CreatePartnerDto } from 'src/common/dtos/create-partner.dto';
@@ -31,6 +32,18 @@ export class PartnersController extends BaseController {
   async findAll(): Promise<BaseResponse<PlainLiteralObject[]>> {
     try {
       const res = await this.partnersService.findAll();
+      return this.success(res);
+    } catch (e) {
+      return this.error(e);
+    }
+  }
+
+  @Get('/share_link/:share_link_id')
+  async findOneByShareLink(
+    @Param('share_link_id') share_link_id: string,
+  ): Promise<BaseResponse<PlainLiteralObject>> {
+    try {
+      const res = await this.partnersService.findByShareLinkId(share_link_id);
       return this.success(res);
     } catch (e) {
       return this.error(e);
