@@ -21,7 +21,6 @@ const envFilePath = [`.env.${process.env.NODE_ENV || 'development'}`, '.env'];
         PORT: Joi.number().default(3306),
         SUPABASE_URL: Joi.string().required(),
         SUPABASE_KEY: Joi.string().required(),
-        SUPABASE_JWT_SECRET: Joi.string().required(),
         UPSTASH_REDIS_REST_URL: Joi.string().required(),
         UPSTASH_REDIS_REST_TOKEN: Joi.string().required(),
       }),
