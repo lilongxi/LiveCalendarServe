@@ -32,8 +32,10 @@
     "cors": "^2.8.5",
     "joi": "^17.13.3",
     "lodash-es": "^4.17.21",
+    "nanoid": "^5.1.5",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

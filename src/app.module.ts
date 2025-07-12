@@ -6,6 +6,7 @@ import { SupabaseModule } from './supabase/supabase.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import { PartnersModule } from './partners/partners.module';
 
 const envFilePath = [`.env.${process.env.NODE_ENV || 'development'}`, '.env'];
 
@@ -27,6 +28,7 @@ const envFilePath = [`.env.${process.env.NODE_ENV || 'development'}`, '.env'];
     }),
     SupabaseModule,
     RedisModule,
+    PartnersModule,
   ],
   controllers: [AppController],
   providers: [AppService, RedisService],
