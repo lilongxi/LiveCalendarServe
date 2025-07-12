@@ -6,6 +6,9 @@ import { SupabaseModule } from './supabase/supabase.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import { PartnersModule } from './partners/partners.module';
+import { SlotsModule } from './slots/slots.module';
+import { AppointmentsModule } from './appointments/appointments.module';
 
 const envFilePath = [`.env.${process.env.NODE_ENV || 'development'}`, '.env'];
 
@@ -21,13 +24,15 @@ const envFilePath = [`.env.${process.env.NODE_ENV || 'development'}`, '.env'];
         PORT: Joi.number().default(3306),
         SUPABASE_URL: Joi.string().required(),
         SUPABASE_KEY: Joi.string().required(),
-        SUPABASE_JWT_SECRET: Joi.string().required(),
         UPSTASH_REDIS_REST_URL: Joi.string().required(),
         UPSTASH_REDIS_REST_TOKEN: Joi.string().required(),
       }),
     }),
     SupabaseModule,
     RedisModule,
+    PartnersModule,
+    SlotsModule,
+    AppointmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService, RedisService],

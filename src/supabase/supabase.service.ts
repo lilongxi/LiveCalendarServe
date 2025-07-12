@@ -26,6 +26,10 @@ export class SupabaseService implements OnModuleInit {
     });
   }
 
+  public getClient() {
+    return this._supabaseAdmin;
+  }
+
   private async createSupabaseAdminClient() {
     if (this._supabaseAdmin) {
       return this._supabaseAdmin;
