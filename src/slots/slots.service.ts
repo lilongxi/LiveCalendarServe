@@ -98,11 +98,12 @@ export class SlotsService {
     return { message: 'Slot cancelled successfully.' };
   }
 
-  async findAll() {
+  async findAll(partner_id: string) {
     const { data, error } = await this.supabaseService
       .getClient()
       .from('available_slots')
-      .select('*');
+      .select('*')
+      .eq('partner_id', partner_id);
 
     if (error) {
       throw new InternalServerErrorException(error.message);

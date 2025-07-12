@@ -19,12 +19,16 @@ export class AppointmentsService {
   async create(createAppointmentDto: CreateAppointmentDto) {
     const { slot_id, founder_name } = createAppointmentDto;
 
+    console.log(slot_id, founder_name);
+
     // 1. 验证 slot_id 是否有效且可用
     const { data: slot, error: slotError } = await this.supabase
       .from('available_slots')
       .select('id, partner_id, start_time, is_appointment, is_active')
       .eq('id', slot_id)
       .single();
+
+    console.log(slot, slotError);
 
     if (slotError || !slot) {
       throw new NotFoundException(`Slot with ID ${slot_id} not found.`);
@@ -44,6 +48,8 @@ export class AppointmentsService {
       .select('id')
       .eq('name', founder_name)
       .single();
+
+    console.log(founder);
 
     if (founderFindError && founderFindError.code !== 'PGRST116') {
       throw new BadRequestException('Error finding founder.');

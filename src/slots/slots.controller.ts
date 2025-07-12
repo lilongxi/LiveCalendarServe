@@ -41,10 +41,12 @@ export class SlotsController extends BaseController {
     }
   }
 
-  @Get('all')
-  async findAll(): Promise<BaseResponse<PlainLiteralObject>> {
+  @Get('/all/:id')
+  async findAll(
+    @Param('id') id: string,
+  ): Promise<BaseResponse<PlainLiteralObject>> {
     try {
-      const res = await this.slotsService.findAll();
+      const res = await this.slotsService.findAll(id);
       return this.success(res);
     } catch (e) {
       return this.error(e);
