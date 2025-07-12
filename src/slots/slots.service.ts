@@ -38,14 +38,6 @@ export class SlotsService {
       );
     }
 
-    // 3. 验证时间是否在 9:00 到 17:00 之间 (UTC 时间)
-    const hours = startTime.getUTCHours();
-    if (hours < 9 || hours >= 17) {
-      throw new BadRequestException(
-        'Start time must be between 09:00 and 17:00 UTC.',
-      );
-    }
-
     const { data, error } = await this.supabaseService
       .getClient()
       .from('available_slots')
@@ -59,6 +51,60 @@ export class SlotsService {
           'This time slot has already been marked as available.',
         );
       }
+      throw new InternalServerErrorException(error.message);
+    }
+
+    return data;
+  }
+
+  async remove(id: string) {
+    // 1. 检查 slot 是否已被预约
+    const { data: appointment, error: appointmentError } =
+      await this.supabaseService
+        .getClient()
+        .from('appointments')
+        .select('id')
+        .eq('slot_id', id)
+        .single();
+
+    if (appointmentError && appointmentError.code !== 'PGRST116') {
+      // PGRST116 aui 'Exact one row not found'
+      throw new InternalServerErrorException(appointmentError.message);
+    }
+
+    if (appointment) {
+      throw new BadRequestException(
+        'This slot has been booked and cannot be deleted.',
+      );
+    }
+
+    // 2. 将可用的 slot 标记为 is_active = false
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from('available_slots')
+      .update({ is_active: false })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+
+    if (!data) {
+      throw new NotFoundException(`Slot with ID "${id}" not found.`);
+    }
+
+    return { message: 'Slot cancelled successfully.' };
+  }
+
+  async findAll() {
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from('available_slots')
+      .select('*');
+
+    if (error) {
       throw new InternalServerErrorException(error.message);
     }
 

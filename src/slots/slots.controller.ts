@@ -1,4 +1,11 @@
-import { Controller, Post, Body, PlainLiteralObject } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  PlainLiteralObject,
+  Param,
+  Get,
+} from '@nestjs/common';
 import { SlotsService } from './slots.service';
 import { CreateSlotDto } from '../common/dtos/create-slot.dto';
 import { BaseController, BaseResponse } from '../common/base';
@@ -15,6 +22,29 @@ export class SlotsController extends BaseController {
   ): Promise<BaseResponse<PlainLiteralObject>> {
     try {
       const res = await this.slotsService.create(createSlotDto);
+      return this.success(res);
+    } catch (e) {
+      return this.error(e);
+    }
+  }
+
+  @Get('/delete/:id')
+  async remove(
+    @Param('id') id: string,
+  ): Promise<BaseResponse<PlainLiteralObject>> {
+    try {
+      console.log(id);
+      const res = await this.slotsService.remove(id);
+      return this.success(res);
+    } catch (e) {
+      return this.error(e);
+    }
+  }
+
+  @Get('all')
+  async findAll(): Promise<BaseResponse<PlainLiteralObject>> {
+    try {
+      const res = await this.slotsService.findAll();
       return this.success(res);
     } catch (e) {
       return this.error(e);
